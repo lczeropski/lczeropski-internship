@@ -1,4 +1,7 @@
 
+#%%
+from typing import Optional
+
 
 class ListNode(object):
     def __init__(self, val=0, next=None):
@@ -16,9 +19,4 @@ class Solution:
             p1 = temp
         return prev
 # %%
-l1=ListNode([1,2,3,4,5])
 # %%
-l1.next
-# %%
-l1.val
-#
