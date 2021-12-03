@@ -131,7 +131,7 @@ negate[3:9] = np.multiply(negate[3:9],-1)
 negate
 # %%
 print(sum(range(5),-1))
-from numpy import *
+from numpy_zad import *
 print(sum(range(5),-1))
 # %%
 a=list(range(5))
@@ -140,7 +140,7 @@ a[-1]
 a
 # %%
 #26
-from numpy import *
+from numpy_zad import *
 b=list(range(5))
 sum(b,-1)
 # %%
