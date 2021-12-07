@@ -1,6 +1,9 @@
 #%%
+from typing import List
+
+
 class Solution:
-    def containsDuplicate(self, nums: list[int]) -> bool:
+    def containsDuplicate(self, nums: List[int]) -> bool:
         self.num = nums
         if len(set(self.num)) == len(self.num):
             return False

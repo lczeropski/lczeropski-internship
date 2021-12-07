@@ -20,3 +20,4 @@ class Solution:
         return prev
 # %%
 # %%
+#TODO: don't destroy head 
