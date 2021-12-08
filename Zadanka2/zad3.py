@@ -1,33 +1,33 @@
 #%%
 class Solution:
-    def maxProfit(self, prices):
+    def __init__(self, prices):
+        self.p = prices
+    def maxProfit(self):
         max_profit = 0
-        min_price = max(prices) 
-        for i in range(0,len(prices)):
-            if prices[i] < min_price:
-                min_price = prices[i]
-            elif prices[i] - min_price > max_profit:
-                max_profit = prices[i] - min_price
+        min_price = max(self.p) 
+        for i in range(0,len(self.p)):
+            if self.p[i] < min_price:
+                min_price = self.p[i]
+            elif self.p[i] - min_price > max_profit:
+                max_profit = self.p[i] - min_price
         return max_profit
 
 
 
 # %%
-a = Solution
-
+a = Solution([7,1,5,3,6,4])
+b = Solution([7,6,4,3,1])
+c = Solution([2,4,1])
+d = Solution([1,2])
+e = Solution([2,1,2,1,0,1,2])
 # %%
+a.maxProfit()
 # %%
-a.maxProfit(a,[7,1,5,3,6,4])
+b.maxProfit()
 # %%
-a.maxProfit(a,[7,6,4,3,1])
+c.maxProfit()
 # %%
-a.maxProfit(a,[2,4,1])
+d.maxProfit()
 # %%
-a.maxProfit(a,[1,2])
-
-# %%
-a.maxProfit(a,[3,3])
-# %%
-
-a.maxProfit(a,[2,1,2,1,0,1,2])
+e.maxProfit()
 # %%

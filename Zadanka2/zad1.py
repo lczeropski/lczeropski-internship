@@ -3,15 +3,19 @@ from typing import List
 
 
 class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        for i in range(0,len(nums)):
-            for j in range(i+1,len(nums)):
-                if (nums[i]+nums[j])==target:
+    def __init__(self, nums):
+        self.n = nums
+    def twoSum(self, target):
+        for i in range(0,len(self.n)):
+            for j in range(i+1,len(self.n)):
+                if (self.n[i]+self.n[j])==target:
                     return [i,j]
 # %%
 # %%
-a=Solution()
+a=Solution([3,2,4])
+b=Solution([1,2,3,4,5,6,7,8,9,10,11,12,13,14,16])
 # %%
-a.twoSum([3,2,4],6)
+a.twoSum(6)
 # %%
-a.twoSum([1,2,3,4,5,6,7,8,9,10,11,12,13,14,16],30)
+b.twoSum(30)
+# %%

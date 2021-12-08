@@ -1,10 +1,12 @@
 #%%
 class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
+    def __init__(self,string) -> None:
+        self.s = string
+    def lengthOfLongestSubstring(self) -> int:
         start = 0
         max_len = 0
         temp = ''
-        for i, c in enumerate(s):
+        for i, c in enumerate(self.s):
             if c not in temp:
                 temp +=c
             else :
@@ -23,8 +25,12 @@ class Solution:
             
             
 # %%
-s=Solution
+s=Solution("abcabcbb")
 # %%
-s.lengthOfLongestSubstring(s,"abcabcbb")
+s.lengthOfLongestSubstring()
 # %%
-#TODO:enumerate
+#DONE:enumerate = index , value
+a = 'abcdefghijk'
+for i,v in enumerate(a):
+    print(i,v)
+# %%

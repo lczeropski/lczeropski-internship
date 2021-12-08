@@ -1,10 +1,15 @@
 #%%
+from typing import List
+
+
 class Solution:
-    def threeSum(self, nums: list[int]) -> list[list[int]]:
-        if len(nums)< 3:
+    def __init__(self, nums) -> None:
+        self.n = nums
+    def threeSum(self) -> List[List[int]]:
+        if len(self.n)< 3:
             return []
         sol = set()
-        nums = sorted(nums)
+        nums = sorted(self.n)
         
         for i in range(len(nums)-2):
             j = i+1
@@ -22,9 +27,7 @@ class Solution:
         
         return list(sol)
 # %%
-s=Solution
+s=Solution([-1,0,1,2,-1,-4])
 # %%
-s.threeSum(a,[-1,0,1,2,-1,-4])
-# %%
-int(len([-1,0,1,2,-1,-4])/3)
-# %%
+s.threeSum()
+

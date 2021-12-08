@@ -1,20 +1,32 @@
 #%%
 class Solution:
-    def isAnagram(self, s: str, t: str) -> bool:
-        return {i:s.count(i) for i in s} == {i: t.count(i) for i in t}
+    def __init__(self, string):
+        self.s = string
+    def isAnagram(self, t: str) -> bool:
+        return {i:self.s.count(i) for i in self.s} == {i: t.count(i) for i in t}
 # %%
-a=Solution
+a=Solution("anagram")
+b=Solution("word")
+c=Solution("notanagram")
 # %%
-a.isAnagram(a,s = "anagram", t = "nagaram")
+
+#%%
+a.isAnagram("nagaram")
+#%%
+b.isAnagram("drow")
+#%%
+c.isAnagram("asdacsa")
 # %%
 class Solution: #szybsze rozwiazanie
-    def isAnagram(self, s: str, t: str) -> bool:
-        a, b = len(s), len(t)       
+    def __init__(self, string):
+        self.s = string
+    def isAnagram(self,t: str) -> bool:
+        a, b = len(self.s), len(t)       
         if a != b:
             return False
         for i in range(a):
-            if s[i] in t:
-                t = t.replace(s[i],'',1)
+            if self.s[i] in t:
+                t = t.replace(self.s[i],'',1)
         if not t:
             return True
         return False

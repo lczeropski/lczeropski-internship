@@ -3,15 +3,17 @@ from typing import List
 
 
 class Solution:
-    def containsDuplicate(self, nums: List[int]) -> bool:
-        self.num = nums
-        if len(set(self.num)) == len(self.num):
+    def __init__(self, nums):
+        self.n = nums
+    def containsDuplicate(self) -> bool:
+        if len(set(self.n)) == len(self.n):
             return False
         return True
 # %%
-a=Solution
+a=Solution([1,2,3,1])
+b=Solution([3,1])
 # %%
-a.containsDuplicate(a,[1,2,3,1])
+a.containsDuplicate()
 # %%
-a.containsDuplicate(a,[3,1])
+b.containsDuplicate()
 # %%

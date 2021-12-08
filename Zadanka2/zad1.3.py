@@ -3,11 +3,13 @@ from typing import List
 
 
 class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        for i in range(0,len(nums)-1):
-            tgt_list = nums[i+1:]
-            if target - nums[i] in tgt_list:
-                return[i,tgt_list.index(target - nums[i])+i+1]
+    def __init__(self, nums):
+        self.n = nums
+    def twoSum(self, target: int) -> List[int]:
+        for i in range(0,len(self.n)-1):
+            tgt_list = self.n[i+1:]
+            if target - self.n[i] in tgt_list:
+                return[i,tgt_list.index(target - self.n[i])+i+1]
 
 
             

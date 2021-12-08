@@ -2,7 +2,7 @@
 #%%
 from typing import Optional
 
-
+#%%
 class ListNode(object):
     def __init__(self, val=0, next=None):
         self.val = val
@@ -17,7 +17,9 @@ class Solution:
             p1.next = prev
             prev = p1
             p1 = temp
+        print(self)
         return prev
 # %%
 # %%
 #TODO: don't destroy head 
+# %%

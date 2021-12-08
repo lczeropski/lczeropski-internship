@@ -1,19 +1,24 @@
 #%%
 class Solution:
-    def isValid(self, s: str) -> bool:
+    def __init__(self, string) -> None:
+        self.s = string
+    def isValid(self) -> bool:
         para = ['()', '{}', '[]']
-        while any(x in s for x in para):
+        while any(x in self.s for x in para):
             for pa in para:
-                s = s.replace(pa, '')
-        return not s
+                self.s = self.s.replace(pa, '')
+        return not self.s
             
                     
 # %%
-a=Solution
+a=Solution("()[]{}")
+b=Solution("sda(){}:")
+c=Solution('{{{})}}')
 # %%
-a.isValid(a,s = "()[]{}")
-# %%
-a.isValid(a,s = "([)]")
-# %%
-a.isValid(a,s = "(]")
+a.isValid()
+#%%
+b.isValid()
+#%%
+c.isValid()
+
 # %%
