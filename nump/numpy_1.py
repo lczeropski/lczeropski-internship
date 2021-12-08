@@ -65,16 +65,13 @@ x.min(),x.max()
 #14
 x = np.random.random(30)
 x.mean()
-
 # %%
 #15
 one_zero = np.ones((10,10))
-# %%
 one_zero[1:-1,1:-1] = 0
-# %%
 one_zero
-# %%
 #16
+#%%
 one_zero = np.pad(one_zero, pad_width = 1, mode = 'constant', constant_values=0)
 # %%
 one_zero
@@ -397,21 +394,18 @@ for x,y,z in iterator:
 print(iterator.operands[0],"\n",iterator.operands[1],"\n",iterator.operands[2])
 # %%
 #63 class method
-class NamedArray:      
-    def __init__(self, array, name="no name"):
-        self.array = np.asarray(array)
-        self.name = name
-Z = NamedArray(np.arange(10))
-Z.array, Z.name
-#%%
 class NamedArray(np.ndarray):
-    def __new__(cls, array, name="no name"):
+    def __new__(cls, array, name = None):
         obj = np.asarray(array).view(cls)
         obj.name = name
         return obj
     def __array_finalize__(self, obj):
         if obj is None: return
-        self.info = getattr(obj, 'name', "no name")
+        self.name = getattr(obj, 'name', None)
+    def __repr__(self):
+        return f" {self.name}: {super().__repr__()} "
+    def __str__(self) :
+        return  self.name + ": " + super().__str__() 
 # %%
 #64 np.bincount or np.add.at
 Z = np.ones(10)
@@ -493,7 +487,7 @@ C = A * B[:,:,None]
 print(C)
 #%%
 #72
-Z = arange(25).reshape(5,5)
+Z = np.arange(25).reshape(5,5)
 print(Z)
 Z[[0,1]] = Z[[1,0]]
 print(Z)
@@ -623,7 +617,6 @@ C = npl.stride_tricks.as_strided(Z, shape=(i, j, n, n), strides=Z.strides + Z.st
 print(C)
 # %%
 #85 
-#TODO: numpy classes
 class Symetric(np.ndarray):
     def __setitem__(self, index, value):
         i,j = index
