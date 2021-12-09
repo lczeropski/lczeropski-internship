@@ -5,6 +5,7 @@ from math import nan
 from pandas.core.construction import array
 from pandas.core.dtypes.dtypes import CategoricalDtype
 import numpy as np
+import numpy.lib as npl
 # %%
 #2
 np.__version__
@@ -588,7 +589,9 @@ def sub(A, s=(5,5), fill = 0, pos = (1,1) ):
     R[tuple(r)] = A[tuple(a)]
     return R
 # %%
-sub(Z,(5,5),0,(1,1)) 
+Z = np.arange(0,64).reshape(8,8)
+#%%
+sub(Z,(3,3)) 
 #%%
 #81 @75,76
 Z = np.arange(1,15,dtype=np.uint32)
@@ -605,7 +608,7 @@ print(rank)
 # %%
 #83
 Z = np.random.randint(0,10,50)
-print(np.bincount(Z).argmax(),Z)
+print(np.bincount(Z).argmax())
 # %%
 #84
 # strides
@@ -654,6 +657,7 @@ print(S)
 windows = npl.stride_tricks.sliding_window_view(Z, (k, k))
 S = windows[::k, ::k, ...].sum(axis=(-2, -1))
 print(S)
+windows
 # %%
 #88 game of life
 def iterate(Z):
@@ -705,19 +709,19 @@ def cartesian(arrays):
 print (cartesian(([1, 2, 3], [4, 5], [6, 7])))
 # %%
 #91
+#access fields of structured arrays by attribute rather than by index
 # np.core.records.fromarrays
 Z = np.array([("Hello", 2.5, 3,'641243'),
               ("World", 3.6, 2,'74214')])
 R = np.core.records.fromarrays(Z.T, names= 'col1, col2, col3, col4',
                               formats = 'S8, f8, i8, S8')
-R
 # %%
 #92
 Z = np.random.rand(10000000)
 # %%
 %timeit np.power(Z,3)
-%timeit x*x*x
-%timeit np.einsum('i,i,i->i',x,x,x)
+%timeit Z*Z*Z
+%timeit np.einsum('i,i,i->i',Z,Z,Z)
 # %%
 #93
 #np.where
@@ -726,7 +730,8 @@ B = np.random.randint(0,10,(2,2))
 
 C = (A[..., np.newaxis, np.newaxis] == B)
 rows = np.where(C.any((3,1)).all(1))[0]
-print(rows,'\n A',A,'\n B',B)
+print('A',A,'\n B',B)
+print('result', rows)
 
 # %%
 #94
@@ -735,6 +740,8 @@ print(Z)
 # %%
 E = np.all(Z[:,1:] == Z[:,:-1], axis=1)
 U = Z[~E] #~not
+#%%
+print(E,U)
 # %%
 #95 np.unpackbits
 I = np.array([0, 1, 2, 3, 15, 16, 32, 64, 128], dtype=np.uint8)
@@ -784,3 +791,5 @@ idx = np.random.randint(0, X.size, (N, X.size))
 means = X[idx].mean(axis=1)
 confint = np.percentile(means, [2.5, 97.5])
 print(confint)
+
+# %%
