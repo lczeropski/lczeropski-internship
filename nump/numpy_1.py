@@ -1,7 +1,6 @@
 #%% 
 #1
 from math import nan
-
 from pandas.core.construction import array
 from pandas.core.dtypes.dtypes import CategoricalDtype
 import numpy as np

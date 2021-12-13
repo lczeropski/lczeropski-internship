@@ -261,3 +261,11 @@ df.query('index < b < c')
 # %%
 chipo.duplicated('item_name')
 # %%
+#exporting
+chipo.to_excel("export.xlsx")
+# %%
+compression_opts = dict(method='zip',
+                        archive_name='data.csv')
+#%%
+chipo.to_csv('chi.zip',index = False, compression=compression_opts)
+# %%
