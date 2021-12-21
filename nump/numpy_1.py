@@ -5,6 +5,8 @@ from pandas.core.construction import array
 from pandas.core.dtypes.dtypes import CategoricalDtype
 import numpy as np
 import numpy.lib as npl
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 # %%
 #2
 np.__version__
@@ -113,6 +115,25 @@ print(matrix,"\n",normed_matrix)
 #23
 colordt = np.dtype([('R', np.ubyte),('G', np.ubyte),('B', np.ubyte),('A', np.ubyte) ])
 colordt
+#%%
+col1 = np.array([(100,35,76,230)],dtype = colordt)
+col2 = np.array([(255,255,255,255)],dtype = colordt)
+print(col1,col2)
+
+#%%
+col2==col1 #False
+col2['R']-col1['R'] #254
+col2['A'] < col1['A'] #False
+#%%
+col_to_plot = [i/255 for i in col1[:][0]]
+col_to_plot
+
+#%%
+fig, ax= plt.subplots()
+ax.plot([0, 10],[0, 10])
+#rect = patches.Rectangle((50, 100), 40, 30, linewidth=1, edgecolor='r', facecolor=(1,1,1,1))
+ax.add_patch(Rectangle((1, 1), 2, 6,facecolor = col_to_plot))
+plt.show()
 # %%
 #24
 matrix1 = np.arange(15).reshape(5,3)
@@ -125,7 +146,10 @@ np.dot(matrix1,matrix2)
 # %%
 #25
 x = np.arange(0,10)
-# %%
+np.negative(x[3:8])
+#%%
+# %% 
+# 
 x[(x >= 3) & (x <=8 )] = np.multiply(x[(x >= 3) & (x <=8 )],-1)
 x
 # %%
@@ -134,7 +158,7 @@ print(sum(range(5),-1)) #9
 from numpy import *
 print(sum(range(5),-1)) #10
 # %%
-#27
+#27 #######---------------###########
 Z=np.arange(10)
 # %%
 Z**Z #L
