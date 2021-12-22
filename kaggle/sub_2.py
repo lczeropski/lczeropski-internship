@@ -249,7 +249,7 @@ keys = list(missing_data.keys())
 
 vals = [float(missing_data[k][:-1]) for k in keys]
 #%%
-plt.pyplot.figure(figsize=(30,8))
+plt.figure(figsize=(30,8))
 sns.barplot(x=keys, y=vals)
 # %%
 sns.distplot(y, kde=False, fit=stats.johnsonsu)
@@ -512,14 +512,10 @@ print('RMSLE score on train data:')
 print(rmsle(y, blend_models_predict(X)))
 # %%
 # %%
-submission = pd.read_csv("/Users/lczeropski/Documents/repos/lczeropski-internship/kaggle/submission.csv")
-
-# %%
+print('Predict submission')
+submission = pd.read_csv("/Users/lczeropski/Documents/repos/lczeropski-internship/kaggle/home-data-for-ml-course/sample_submission.csv")
+#%%
 submission.iloc[:,1] = np.floor(np.expm1(blend_models_predict(X_sub)))
-# %%
-submission
-# %%
 submission.to_csv("submission.csv", index=False)
 # %%
-preds
-# %%
+submission
