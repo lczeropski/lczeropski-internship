@@ -18,7 +18,22 @@ from xgboost import XGBRegressor
 
 train = pd.read_csv('/Users/lczeropski/Documents/repos/lczeropski-internship/kaggle/home-data-for-ml-course/train.csv')
 test = pd.read_csv('/Users/lczeropski/Documents/repos/lczeropski-internship/kaggle/home-data-for-ml-course/test.csv')
+id = test.Id
+train.drop(['Id'], axis=1, inplace=True)
+test.drop(['Id'], axis=1, inplace=True)
 # %%
+
+#%%
+fig, ax = plt.subplots()
+ax.scatter(x = train['GrLivArea'], y = np.log(train['SalePrice']))
+plt.ylabel('SalePrice', fontsize=13)
+plt.xlabel('GrLivArea', fontsize=13)
+m, b = np.polyfit(train['GrLivArea'], np.log(train['SalePrice']), 1)
+plt.plot(train['GrLivArea'], m*train['GrLivArea'] + b)
+plt.show()
+#%%
+train = train[train.GrLivArea < 4000]
+train.reset_index(drop=True, inplace=True)
 y = train.SalePrice
 X = train.drop(['SalePrice'], axis=1)
 # %%
@@ -65,9 +80,9 @@ my_cols = categorical_cols + numerical_cols
 X_train = X_train_full[my_cols].copy()
 X_valid = X_valid_full[my_cols].copy()
 X_test = test[my_cols]
-
+#%%
 def output_preds(pre):
-    output = pd.DataFrame({'Id': test.Id,
+    output = pd.DataFrame({'Id': id,
                        'SalePrice': pre})
     output.to_csv('submission.csv', index=False)
 
@@ -103,19 +118,19 @@ def score_pipe(s=100,step=100,end=3000):
     for i in list(range(s,end,step)):
         mod = XGBRegressor(learning_rate=0.01,n_estimators=i,
                                         max_depth=6, min_child_weight=0,
-                                        gamma=0, subsample=0.7,
+                                        gamma=0, subsample=0.6,
                                         colsample_bytree=0.7,
                                         objective='reg:tweedie', nthread=-1,
                                         eval_metric='poisson-nloglik',
                                         #scale_pos_weight=1,
                                         seed=27,
-                                        reg_alpha=0.00003,tree_method = 'exact')
+                                        reg_alpha=0,tree_method = 'exact')
         my_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                 ('model', mod)
                                 ])
-        my_pipeline.fit(X_train, np.log(y_train))
+        my_pipeline.fit(X_train, np.log1p(y_train))
         preds = my_pipeline.predict(X_valid)
-        score = mean_absolute_error(np.log(y_valid), preds)
+        score = mean_absolute_error(np.log1p(y_valid), preds)
         if score<m:
             m = min(m,score)
             o = i
@@ -133,15 +148,15 @@ def test_seed(s,n):
     o = 0
     m = np.inf
     for i in list(range(s)):
-        mod = XGBRegressor(learning_rate=0.01,n_estimators=n,
+        mod = XGBRegressor(learning_rate=0.01,n_estimators=2600,
                                         max_depth=6, min_child_weight=0,
-                                        gamma=0, subsample=0.7,
+                                        gamma=0, subsample=0.6,
                                         colsample_bytree=0.7,
                                         objective='reg:tweedie', nthread=-1,
                                         eval_metric='poisson-nloglik',
                                         #scale_pos_weight=1,
                                         seed=i,
-                                        reg_alpha=0.00003,tree_method = 'exact')
+                                        reg_alpha=0,tree_method = 'exact')
         my_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                 ('model', mod)
                                 ])
@@ -161,7 +176,9 @@ def test_seed(s,n):
     return m       
    
 #%%
-res = score_pipe(1,100,4000)
+res = score_pipe(2500,100,4000)
+#0.08201142544600726
+#0.08201142544600726
 #%%
 test_seed(50,2501)
 #%% best
@@ -170,27 +187,27 @@ res <= best
 #%%  er = 13668.084987692637   reg_alpha = 0.00008 ,seed=22 , n = 3420
 model = XGBRegressor(learning_rate=0.01,n_estimators=2301,
                                         max_depth=6, min_child_weight=0,
-                                        gamma=0, subsample=0.7,
+                                        gamma=0, subsample=0.6,
                                         colsample_bytree=0.7,
                                         objective='reg:tweedie', nthread=-1,
                                         eval_metric='poisson-nloglik',
                                         #scale_pos_weight=1,
                                         seed=27,
-                                        reg_alpha=0.00008,tree_method = 'exact')
+                                        reg_alpha=0,tree_method = 'exact')
 my_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                               ('model', model)
                              ])
-my_pipeline.fit(X_train, np.log(y_train))
+my_pipeline.fit(X_train, np.log1p(y_train))
 preds = my_pipeline.predict(X_test)
-output_preds(np.round(np.expm1(preds),2))
+output_preds(np.floor(np.expm1(preds),2))
 print(np.mean(y)/np.mean(np.round(np.expm1(preds),2)))
 #%%
 # %%
 np.round(np.expm1(preds),2)
 # %%
-#hist  min error: 0.09468593553636613 for n: 901
-#exact min error: 0.08663057333730591 for n: 901
-#approx min error: 0.08871840513906465 for n: 901
+#hist  0.08191571390763933 for n: 1600
+#exact min error: min error: 0.07978004625624305 for n: 1900
+#approx min error: min error: 0.0808893880177219 for n: 1900
 ########
 #exact
 ##reg:squarederror min error: 0.0840160702456001 for n: 901
@@ -200,4 +217,43 @@ np.round(np.expm1(preds),2)
 ##reg:gamma min error: 0.0960830321085012 for n: 901
 #%%
 
+# %%
+best_mod = XGBRegressor(learning_rate=0.01,n_estimators=2301,
+                                        max_depth=6, min_child_weight=0,
+                                        gamma=0, subsample=0.6,
+                                        colsample_bytree=0.7,
+                                        objective='reg:tweedie', nthread=-1,
+                                        eval_metric='poisson-nloglik',
+                                        #scale_pos_weight=1,
+                                        seed=27,
+                                        reg_alpha=0,tree_method = 'exact')
+#%%
+from sklearn.model_selection import GridSearchCV
+
+mod = XGBRegressor(learning_rate=0.01,n_estimators=3000,
+                                        max_depth=6, min_child_weight=0,
+                                        gamma=0, subsample=0.6,
+                                        colsample_bytree=0.7,
+                                        objective='reg:tweedie', nthread=-1,
+                                        eval_metric='poisson-nloglik',
+                                        #scale_pos_weight=1,
+                                        seed=27,
+                                        reg_alpha=0,tree_method = 'exact')
+my_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
+                                ('model', mod)
+                                ])
+
+# %%
+param_grid = {
+    #"model__n_estimators": [i for i in range(0,1000,50)],
+    "model__max_depth": [2,4,6,8],
+    "model__subsample" : [i/10 for i in range(1,10)],
+    "model__seed" :list(range(0,30,1))
+}
+# %%
+search = GridSearchCV(my_pipeline, param_grid, n_jobs=-1)
+search.fit(X_train, np.log1p(y_train))
+# %%
+print("Best parameter (CV score=%0.3f):" % search.best_score_)
+print(search.best_params_)
 # %%
