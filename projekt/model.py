@@ -15,11 +15,11 @@ from xgboost import XGBClassifier
 def read_data():
     data = pd.read_json(input()) #/Users/lczeropski/Documents/usersessions/dataset.json
     return data
-
+print('write train file path')
 train = read_data()
-
-def data_prep(data):
-    target = int(input())
+print('write target id')
+target = int(input())
+def data_prep(data,target = target):
     tgt = data[data['user_id'] == target]
     sites = pd.json_normalize(data.sites) 
     dt=data.drop('sites',axis = 1) 
@@ -48,10 +48,10 @@ def data_prep(data):
     y = y.apply(lambda x: -1 if x==target else x)
     y = y.apply(lambda x: 0 if x>=0  else 1)
     X = data.drop("user_id",axis = 1)
-    return X,y
+    return X,y,target
 
 
-X,y = data_prep(train)
+X,y,target = data_prep(train)
 
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, test_size=0.2,random_state=10,stratify=y)
 
@@ -104,4 +104,7 @@ tn, fp, fn, tp = confusion_matrix(y_valid,preds).ravel()
 print('True negatives',tn,'\nFalse positives',fp,'\nFalse negatives',fn,'\nTrue positives',tp)
 
 joblib.dump(pipe,'find_user_model')
-
+print('write data path to make prediction')
+to_pred= read_data()
+test = data_prep(to_pred)
+print(predict(to_pred))
