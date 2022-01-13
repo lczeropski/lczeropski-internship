@@ -1,4 +1,4 @@
-#%%
+
 import argparse
 import pathlib
 import joblib
@@ -12,9 +12,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier
-#%%
-##TODO fix paramas not list
+from sklearn.ensemble import GradientBoostingClassifier
+
 parser = argparse.ArgumentParser(description='Parser')
 parser.add_argument('train', type=pathlib.Path,
                     help='train data path' )
@@ -32,7 +31,7 @@ print(vars(args))
 args = vars(args)
 
 def read_data(path):
-    data = pd.read_json(path) #/Users/lczeropski/Documents/usersessions/dataset.json
+    data = pd.read_json(path) 
     return data
 train = read_data(args['train'])
 target = args['target']
@@ -100,7 +99,8 @@ if args['model']==0:
                       scale_pos_weight = 1,
                       use_label_encoder=False)
 else:
-    model = RandomForestClassifier(max_depth=3, class_weight = 'balanced',n_estimators = 150)
+    model = GradientBoostingClassifier(n_estimators=300, learning_rate=0.01,
+    max_depth=6)
 pipe = Pipeline(steps=[('preprocessor', preprocessor),
                        ('standardscaler', StandardScaler(with_mean=False)),
                               ('model', model)
