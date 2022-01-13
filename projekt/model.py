@@ -1,5 +1,6 @@
 #%%
 import argparse
+import pathlib
 import joblib
 import numpy as np
 import pandas as pd
@@ -13,16 +14,17 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 #%%
+##TODO fix paramas not list
 parser = argparse.ArgumentParser(description='Parser')
-parser.add_argument('train', type=str, nargs=1,
+parser.add_argument('train', type=pathlib.Path,
                     help='train data path' )
-parser.add_argument('--target', type=int, nargs=1,default=0,
+parser.add_argument('--target', type=int,default=0,
                     help='target id ' )
-parser.add_argument('--split', type=float, nargs=1,default=0.8,
+parser.add_argument('--split', type=float,default=0.8,
                     help='split ratio float ' )
-parser.add_argument('--model', type=int, nargs=1,default=0,
+parser.add_argument('--model', type=int,default=0,
                     help='1 to use different model' )
-parser.add_argument('--pre', type=str, nargs=1,default=None,
+parser.add_argument('--pre', type=pathlib.Path,default=None,
                     help='to predict data path' )
 
 args = parser.parse_args()
@@ -32,7 +34,7 @@ args = vars(args)
 def read_data(path):
     data = pd.read_json(path) #/Users/lczeropski/Documents/usersessions/dataset.json
     return data
-train = read_data((args['train'][0]))
+train = read_data(args['train'])
 target = args['target']
 
 
