@@ -12,7 +12,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import GradientBoostingClassifier,RandomForestClassifier, AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+
 def cal_threshold(model,X_val,y_val):
     preds = model.predict_proba(X_val)[:,1]
     precision, recall, thresholds = metrics.precision_recall_curve(y_val,preds)
@@ -31,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--split', type=float,default=0.8,
                         help='split ratio float ' )
     parser.add_argument('--model', type=str,default='xgboost',
-                        help='supported models are xgboost and gradient_boost' )
+                        help='supported models are xgboost, gradient_boost, tree, forest, ada' )
     parser.add_argument('--predict', type=bool,default=False,
                         help='Boolean value, True to use model to make prediction on dataset' )
     parser.add_argument('--dataset_path', type=pathlib.Path,
@@ -40,7 +43,6 @@ if __name__ == '__main__':
                         help='dataset path to make predictions, used when dataset is not in working directory' )
 
     args = parser.parse_args()
-    print(vars(args))
     args = vars(args)
 
     if args['dataset_path']:
@@ -69,18 +71,22 @@ if __name__ == '__main__':
             ('num', numerical_transformer, numerical_cols),
             ('hot', categorical_transformer_oh, cat_cols)
         ])
-    if args['model']=='xgboost':
-        model = XGBClassifier(objective='binary:logistic',
+    models = {
+        'xgboost':XGBClassifier(objective='binary:logistic',
                         n_estimators = 150,
                         eval_metric = 'auc',
                         max_depth = 3,
                         random_state = 1,
                         min_child_weight = 0.5,
                         scale_pos_weight = 1,
-                        use_label_encoder=False)
-    elif args['model']=='gradient_boost':
-        model = GradientBoostingClassifier(n_estimators=300, learning_rate=0.01,
-        max_depth=6)
+                        use_label_encoder=False),
+        'gradient_boost':GradientBoostingClassifier(n_estimators=300, learning_rate=0.01,
+        max_depth=6),
+        'tree' : DecisionTreeClassifier(class_weight = 'balanced',criterion = 'entropy'),
+        'forest':RandomForestClassifier(class_weight = 'balanced',criterion= 'entropy'),
+        'ada' : AdaBoostClassifier(base_estimator = DecisionTreeClassifier(class_weight = 'balanced',criterion = 'entropy'))      
+    }
+    model=models[args['model']]
     pipe = Pipeline(steps=[('preprocessor', preprocessor),
                         ('standardscaler', StandardScaler(with_mean=False)),
                                 ('model', model)
