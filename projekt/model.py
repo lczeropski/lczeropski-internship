@@ -13,55 +13,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-class Data_prep:
-    def __init__(self,path):
-        self.path = path
-        self.data = pd.read_json(self.path)
-    def _flatten(self):
-        sites = pd.json_normalize(self.data.sites)
-        self.lensi = len(sites.columns)
-        dt=self.data.drop('sites',axis = 1) 
-        for i in range(0,len(sites.columns)):
-            dt['site'+str(i)] = pd.json_normalize(sites[i]).site 
-            dt['site_len'+str(i)] = pd.json_normalize(sites[i]).length 
-            dt['site'+str(i)].fillna('None',inplace=True) 
-            dt['site_len'+str(i)].fillna(0,inplace = True) 
-        self.data = dt 
-        self.data["time"] = pd.to_timedelta(self.data["time"])
-        self.data["time"] = self.data["time"].dt.components["hours"]*60 + self.data["time"].dt.components["minutes"] 
-        self.data['date'] = pd.to_datetime(self.data['date']).view(np.int64) 
-        self.data["gender"].replace({'m':0,'f':1},inplace = True)
-    def get_target(self):
-        return self.__target
-    def set_target(self,target_id):
-        self.__target = target_id
-    def get_pattern(self):
-        return repr(self.pattern)
-    def _generate_pattern(self):
-        separeted = self.data[self.data['user_id']==self.__target]
-        separeted.to_csv('user'+'_'+str(self.__target))
-    def _set_pattern(self):
-        self.pattern = pd.read_csv('user'+'_'+str(self.__target))            
-    def _reduce(self):      
-        for i in ['browser','os','locale','location']:
-                tem = self.pattern[i].unique()
-                for j in (self.data[i].unique()):
-                    if j not in tem:
-                        self.data[i].replace(to_replace = j,value = 'Other',inplace = True)
-        for i in range(0,self.lensi):
-                tem = self.pattern['site'+str(i)].value_counts()[:10].index
-                for j in set(self.data["site"+str(i)]):
-                    if j not in tem:
-                        self.data["site"+str(i)].replace(to_replace=j,value='Other',inplace=True)
-    def procces(self):
-        self._flatten()
-        if "user_id" in self.data.columns:
-            self._generate_pattern()
-        self._set_pattern()
-        self._reduce()
-        return self.data  
-    def __repr__(self):
-        return repr(self.data)
 def cal_threshold(model,X_val,y_val):
     preds = model.predict_proba(X_val)[:,1]
     precision, recall, thresholds = metrics.precision_recall_curve(y_val,preds)
@@ -75,28 +26,30 @@ def th_predict(test,model,th):
     return preds
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parser')
-    parser.add_argument('dataset_path', type=pathlib.Path,
-                        help='dataset path to train model' )
     parser.add_argument('--target', type=int,default=0,
                         help='target id' )
     parser.add_argument('--split', type=float,default=0.8,
                         help='split ratio float ' )
     parser.add_argument('--model', type=str,default='xgboost',
                         help='supported models are xgboost and gradient_boost' )
-    parser.add_argument('--pre_path', type=pathlib.Path,default=None,
-                        help='dataset path to make predictions' )
+    parser.add_argument('--predict', type=bool,default=False,
+                        help='Boolean value, True to use model to make prediction on dataset' )
+    parser.add_argument('--dataset_path', type=pathlib.Path,
+                        help='dataset path to train model, use when dataset is not in working directory' )
+    parser.add_argument('--dataset_pred', type=pathlib.Path,
+                        help='dataset path to make predictions, used when dataset is not in working directory' )
 
     args = parser.parse_args()
     print(vars(args))
     args = vars(args)
 
-
-    obj=Data_prep(args['dataset_path'])
-    obj.set_target(args['target'])
-    train = obj.procces()
-
+    if args['dataset_path']:
+        train_path = args['dataset_path']
+    else:
+        train_path = 'train_user'+str(args['target'])
+    train = pd.read_csv(train_path)
     y = train["user_id"]
-    y = y.apply(lambda x: 0 if x==obj.get_target() else 1)
+    y = y.apply(lambda x: 0 if x==args['target'] else 1)
     X = train.drop("user_id",axis = 1)
 
 
@@ -148,10 +101,13 @@ if __name__ == '__main__':
     print('True negatives',tn,'\nFalse positives',fp,'\nFalse negatives',fn,'\nTrue positives',tp)
 
     joblib.dump(pipe,'find_user_model')
-    if args['pre_path']:
+    if args['predict']:
+        if args['dataset_path']:
+            pre_path = args['dataset_pred']
+        else:
+            pre_path = 'to_pred_user'+str(args['target'])
         print('making prediction on data')
-        to_pred=Data_prep(args['pre_path'])
-        to_pred.set_target(obj.get_target())
+        to_pred=pd.read_csv(pre_path)
         predictions = th_predict(to_pred,results[0],results[1])
         print(predictions)
         pd.DataFrame(predictions).to_csv('predictions')
