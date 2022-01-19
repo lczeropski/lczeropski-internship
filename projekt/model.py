@@ -14,11 +14,9 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 class Data_prep:
-    def __init__(self,path,target_id=None):
+    def __init__(self,path):
         self.path = path
         self.data = pd.read_json(self.path)
-        self._set_target(target_id)
-        self._pattern = None
     def _flatten(self):
         sites = pd.json_normalize(self.data.sites)
         self.lensi = len(sites.columns)
@@ -33,16 +31,16 @@ class Data_prep:
         self.data["time"] = self.data["time"].dt.components["hours"]*60 + self.data["time"].dt.components["minutes"] 
         self.data['date'] = pd.to_datetime(self.data['date']).view(np.int64) 
         self.data["gender"].replace({'m':0,'f':1},inplace = True)
-    def _get_target(self):
+    def get_target(self):
         return self.__target
-    def _set_target(self,target_id):
+    def set_target(self,target_id):
         self.__target = target_id
-    def _get_pattern(self):
+    def get_pattern(self):
         return repr(self.pattern)
-    def _set_pattern(self):
+    def _generate_pattern(self):
         separeted = self.data[self.data['user_id']==self.__target]
         separeted.to_csv('user'+'_'+str(self.__target))
-    def _load_pattern(self):
+    def _set_pattern(self):
         self.pattern = pd.read_csv('user'+'_'+str(self.__target))            
     def _reduce(self):      
         for i in ['browser','os','locale','location']:
@@ -57,9 +55,9 @@ class Data_prep:
                         self.data["site"+str(i)].replace(to_replace=j,value='Other',inplace=True)
     def procces(self):
         self._flatten()
-        if 'user_id' in self.data.columns:
-            self._set_pattern()
-        self._load_pattern()
+        if "user_id" in self.data.columns:
+            self._generate_pattern()
+        self._set_pattern()
         self._reduce()
         return self.data  
     def __repr__(self):
@@ -93,11 +91,12 @@ if __name__ == '__main__':
     args = vars(args)
 
 
-    obj=Data_prep(args['dataset_path'],args['target'])
+    obj=Data_prep(args['dataset_path'])
+    obj.set_target(args['target'])
     train = obj.procces()
 
     y = train["user_id"]
-    y = y.apply(lambda x: 0 if x==obj._get_target() else 1)
+    y = y.apply(lambda x: 0 if x==obj.get_target() else 1)
     X = train.drop("user_id",axis = 1)
 
 
@@ -151,7 +150,8 @@ if __name__ == '__main__':
     joblib.dump(pipe,'find_user_model')
     if args['pre_path']:
         print('making prediction on data')
-        to_pred=Data_prep(args['pre_path'],args['target']).procces()
+        to_pred=Data_prep(args['pre_path'])
+        to_pred.set_target(obj.get_target())
         predictions = th_predict(to_pred,results[0],results[1])
         print(predictions)
         pd.DataFrame(predictions).to_csv('predictions')
