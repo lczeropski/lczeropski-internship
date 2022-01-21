@@ -1,4 +1,4 @@
-"""
+"""[summary]
 Module to train test model, improve it by predict threshold
 Model detects user with given id (default id=0 :Codename Joe)
 Model requires data transformed by data_preparation.py
@@ -38,14 +38,13 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 def cal_threshold(mod_to_improve, x_val, y_val):
-    """
+    """[summary]
     Function to calculate the best threshold to improve
     precision/recall ratio
     Args:
         model (sklearn model): Model to witch improvment will be find
         x_valid (Pandas DataFrame): Validation data frame with
         y_valid (array): An array with true values of users id used to validate the prediction
-
     Returns:
         model (sklearn model): Model to witch optimal threshold was found
         threshold (Float): Optimal threshold value
@@ -57,7 +56,7 @@ def cal_threshold(mod_to_improve, x_val, y_val):
     threshold = thresholds[index]
     return mod_to_improve, threshold
 def th_predict(test, model_improved, treshold=0.5):
-    """
+    """[summary]
     Function to make better predictons using found threshold
     Args:
         test (Pandas DataFrame): Data to make prediction on
@@ -103,11 +102,11 @@ if __name__ == '__main__':
                                 X_train[cname].dtype == "object"]
         numerical_cols = [cname for cname in X_train.columns if
                           X_train[cname].dtype in ['int64', 'float64']]
-        categorical_transformer_oh = Pipeline(steps=[ 
+        categorical_transformer_oh = Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='most_frequent')),
             ('onehot', OneHotEncoder(handle_unknown='ignore',sparse=False))
             ])
-        numerical_transformer = Pipeline(steps=[ 
+        numerical_transformer = Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='mean')),
             ('scaler', StandardScaler(with_mean=False))
             ])
