@@ -103,10 +103,14 @@ if __name__ == '__main__':
                                 X_train[cname].dtype == "object"]
         numerical_cols = [cname for cname in X_train.columns if
                           X_train[cname].dtype in ['int64', 'float64']]
-        categorical_transformer_oh = Pipeline(steps=[
+        categorical_transformer_oh = Pipeline(steps=[ 
+            ('imputer', SimpleImputer(strategy='most_frequent')),
             ('onehot', OneHotEncoder(handle_unknown='ignore',sparse=False))
-        ])
-        numerical_transformer = SimpleImputer(strategy='mean')
+            ])
+        numerical_transformer = Pipeline(steps=[ 
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler(with_mean=False))
+            ])
         preprocessor = ColumnTransformer(
             transformers=[
                 ('num', numerical_transformer, numerical_cols),
@@ -121,7 +125,7 @@ if __name__ == '__main__':
                             min_child_weight = 0.5,
                             scale_pos_weight = 1,
                             use_label_encoder=False),
-            '': GradientBoostingClassifier(n_estimators=300, learning_rate=0.01,
+            'gradient_boost': GradientBoostingClassifier(n_estimators=300, learning_rate=0.01,
             max_depth=6),
             'tree': DecisionTreeClassifier(class_weight = 'balanced', criterion = 'entropy'),
             'forest': RandomForestClassifier(class_weight = 'balanced', criterion= 'entropy'),
@@ -130,7 +134,6 @@ if __name__ == '__main__':
         }
         model=models[args['model']]
         pipe = Pipeline(steps=[('preprocessor', preprocessor),
-                            ('standardscaler', StandardScaler(with_mean=False)),
                                     ('model', model)
                                     ])
         pipe.fit(X_train, y_train)
