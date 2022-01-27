@@ -1,0 +1,20 @@
+(sklearn-env) lczeropski@C6872 projekt % python3 model.py --load_model /Users/lczeropski/Documents/repos/lczeropski-internship/projekt/find_user_model.sav --predict True
+{'target': 0, 'split': 0.8, 'model': 'xgboost', 'predict': True, 'dataset_path': None, 'dataset_pred': None, 'load_model': PosixPath('/Users/lczeropski/Documents/repos/lczeropski-internship/projekt/find_user_model.sav')}
+making prediction on data
+[0 0 0 ... 1 1 1]
+(sklearn-env) lczeropski@C6872 projekt % 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

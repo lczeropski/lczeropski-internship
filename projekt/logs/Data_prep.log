@@ -1,0 +1,20 @@
+(sklearn-env) lczeropski@C6872 projekt % python3 data_preparation.py /Users/lczeropski/Documents/usersessions/dataset.json --pre_path /Users/lczeropski/Documents/usersessions/verify.json
+{'dataset_path': PosixPath('/Users/lczeropski/Documents/usersessions/dataset.json'), 'target': 0, 'pre_path': PosixPath('/Users/lczeropski/Documents/usersessions/verify.json')}
+(sklearn-env) lczeropski@C6872 projekt % 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
