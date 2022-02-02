@@ -1,0 +1,31 @@
+(sklearn-env) lczeropski@C6872 projekt % python3 model.py --predict True
+{'target': 0, 'split': 0.8, 'model': 'xgboost', 'predict': True, 'dataset_path': None, 'dataset_pred': None, 'load_model': None}
+True negatives 72 
+False positives 8 
+False negatives 1 
+True positives 15919
+              precision    recall  f1-score   support
+
+           0       0.99      0.90      0.94        80
+           1       1.00      1.00      1.00     15920
+
+    accuracy                           1.00     16000
+   macro avg       0.99      0.95      0.97     16000
+weighted avg       1.00      1.00      1.00     16000
+
+              precision    recall  f1-score   support
+
+           0       0.99      0.94      0.96        80
+           1       1.00      1.00      1.00     15920
+
+    accuracy                           1.00     16000
+   macro avg       0.99      0.97      0.98     16000
+weighted avg       1.00      1.00      1.00     16000
+
+True negatives 75 
+False positives 5 
+False negatives 1 
+True positives 15919
+making prediction on data
+[0 0 0 ... 1 1 1]
+(sklearn-env) lczeropski@C6872 projekt % 
